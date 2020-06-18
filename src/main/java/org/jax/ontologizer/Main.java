@@ -23,6 +23,7 @@ public class Main {
         OntologizerCommand parentchild = new ParentChildCommand();
         OntologizerCommand tft = new TermForTermCommand();
         OntologizerCommand mgsa = new MgsaCommand();
+        OntologizerCommand matrix = new Go2MatrixCommand();
         JCommander jc = JCommander.newBuilder()
                 .addObject(main)
                 .addCommand("download", download)
@@ -31,6 +32,7 @@ public class Main {
                 .addCommand("parentchild", parentchild)
                 .addCommand("tft", tft)
                 .addCommand("mgsa", mgsa)
+                .addCommand("matrix", matrix)
                 .build();
         try {
             jc.parse(args);
@@ -67,6 +69,9 @@ public class Main {
                 break;
             case "mgsa":
                 myCommand = mgsa;
+                break;
+            case "matrix":
+                myCommand = matrix;
                 break;
             default:
                 System.err.println("[ERROR] Did not recognize command: "+ command);
