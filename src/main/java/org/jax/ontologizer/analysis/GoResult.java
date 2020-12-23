@@ -3,9 +3,9 @@ package org.jax.ontologizer.analysis;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.monarchinitiative.phenol.stats.GoTerm2PValAndCounts;
-import org.monarchinitiative.phenol.stats.PValueCalculation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GoResult implements Comparable<GoResult> {
@@ -39,6 +39,16 @@ public class GoResult implements Comparable<GoResult> {
     }
 
     /**
+     * Header for table with TFT.
+     * In contrast to Ontologizer, do not show p.min
+     */
+    private final static List<String> tftHeaders = Arrays.asList("ID", "Pop.total", "Pop.term", "Study.total", "Study.term", "p", "p.adjusted", "name");
+
+    public static List<String> ontologizerHeader() {
+        return tftHeaders;
+    }
+
+    /**
      * Get row similar to Ontologizer
      * ID	Pop.total	Pop.term	Study.total	Study.term	p	p.adjusted	p.min	name
      * GO:0044419	3460	556	60	25	1.6603329636585245E-6	0.0049179062383565494	0.0	"biological process involved in interspecies interaction between organisms"
@@ -53,6 +63,26 @@ public class GoResult implements Comparable<GoResult> {
         row.add(String.valueOf(this.raw_p));
         row.add(String.valueOf(this.adj_p));
         row.add(this.goLabel);
+        return row;
+    }
+
+    public static List<String> extendedHeader() {
+        return extendedHeaderFields;
+    }
+    private static final List<String> extendedHeaderFields =
+            Arrays.asList("name", "ID", "p", "p.adjusted", "study", "pop");
+
+
+    public List<String> getExtendedRow() {
+        List<String> row = new ArrayList<>();
+        double studypercentage = 100.0 * (double) this.annotatedStudyGenes / this.totalStudyGenes;
+        double poppercentage = 100.0 * (double) this.annotatedPopulationGenes / this.totalPopulationGenes;
+        row.add(this.goLabel);
+        row.add(this.goId);
+        row.add(String.valueOf(this.raw_p));
+        row.add(String.valueOf(this.adj_p));
+        row.add(String.format("n=%d (%.1f%%)",this.annotatedStudyGenes, studypercentage));
+        row.add(String.format("n=%d (%.1f%%)", this.annotatedPopulationGenes , poppercentage));
         return row;
     }
 
@@ -74,8 +104,6 @@ public class GoResult implements Comparable<GoResult> {
 
     @Override
     public int compareTo(GoResult that) {
-        if (this.raw_p < that.raw_p) return 1;
-        else if (that.raw_p < this.raw_p) return -1;
-        else return 0;
+        return Double.compare(that.raw_p, this.raw_p);
     }
 }

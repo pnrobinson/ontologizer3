@@ -6,8 +6,8 @@ import java.util.List;
 
 public class TabularOutput {
 
-    List<String> headerfields;
-    List<GoResult> results;
+    final List<String> headerfields;
+    final List<GoResult> results;
 
     public TabularOutput(List<String> headerfields, List<GoResult> results) {
         this.headerfields = headerfields;
