@@ -1,22 +1,26 @@
 package org.jax.ontologizer.command;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import picocli.CommandLine;
+
+import java.util.concurrent.Callable;
 import org.jax.ontologizer.io.Downloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Download a number of files needed for the org.jax.hc2go.analysis. We download by default to a subdirectory called
- * {@code data}, which is created if necessary. We download the files {@code hp.obo}, {@code phenotype.hpoa},
- * {@code Homo_sapiencs_gene_info.gz}, and {@code mim2gene_medgen}.
+ * Download a number of files needed for Ontologizer analysis. We download by default to a subdirectory called
+ * {@code data}, which is created if necessary. We download the files TODO
  * @author <a href="mailto:peter.robinson@jax.org">Peter Robinson</a>
  */
-@Parameters(commandDescription = "Download files for HC2GO")
-public class DownloadCommand extends OntologizerCommand {
+@CommandLine.Command(name = "download", aliases = {"D"},
+        mixinStandardHelpOptions = true,
+        description = "Download files for ontologizer3")
+public class DownloadCommand implements Callable<Integer> {
     private static final Logger logger = LoggerFactory.getLogger(DownloadCommand.class);
-    @Parameter(names={"-w","--overwrite"}, description = "overwrite prevously downloaded files, if any")
+    @CommandLine.Option(names={"-w","--overwrite"}, description = "overwrite previously downloaded files (default: ${DEFAULT-VALUE})")
     private boolean overwrite;
+    @CommandLine.Option(names = {"-d", "--data"}, description = "path to data download file")
+    protected String dataDir = "data";
 
     public DownloadCommand() {
         super();
@@ -24,10 +28,11 @@ public class DownloadCommand extends OntologizerCommand {
 
 
     @Override
-    public void run() {
+    public Integer call() {
         logger.info(String.format("Download to %s", dataDir));
         Downloader downloader = new Downloader(dataDir, overwrite);
         downloader.download();
+        return 0;
     }
 }
 
